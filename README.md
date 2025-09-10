@@ -12,4 +12,5 @@ En se basant sur ce que tu as vu dans la vidéo :
 ---
 
 ## Consigne supplémentaire
-👉 Faire un **Singleton** pour la classe de **BDD**.
+- Faire un **Singleton** pour la classe de **BDD**.
+- Faire des **Repository** pour les classes **Modeles**
