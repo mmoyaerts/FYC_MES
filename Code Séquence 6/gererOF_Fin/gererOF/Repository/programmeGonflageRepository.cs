@@ -22,7 +22,8 @@ namespace gererOF.Repository
 
             while (reader.Read())
             {
-                var programme = new programmeGonflage(reader.GetInt32(reader.GetOrdinal("idgonflage")), reader.GetString(reader.GetOrdinal("labelgonflage")));
+                var programme = new programmeGonflage(reader.GetInt32(reader.GetOrdinal("idgonflage")),
+                    reader.GetString(reader.GetOrdinal("labelgonflage")));
 
                 result.Add(programme);
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Dll_OPC;
 using gererOF.Models;
 using gererOF.Service;
 
@@ -9,6 +10,8 @@ namespace gererOF
     public partial class Form1 : Form
     {
         private readonly OFService _ofService;
+        private readonly OPCUAService _opCUAService;
+        private OpcUaClientManager opcUaClient;
 
         public Form1()
         {
@@ -16,6 +19,7 @@ namespace gererOF
 
             // Initialisation du service
             _ofService = new OFService();
+            _opCUAService = new OPCUAService();
 
             // Événement de chargement du formulaire
             this.Load += Form1_Load;
@@ -25,6 +29,12 @@ namespace gererOF
         {
             try
             {
+                string endpointUrl = "opc.tcp://ADMINIS-AIHP154.mshome.net:53530/OPCUA/SimulationServer";
+                opcUaClient = new OpcUaClientManager(endpointUrl);
+                Task.Run(async () =>
+                {
+                    await _opCUAService.RunApplication(endpointUrl, opcUaClient);
+                });
                 // Récupère tous les OF via le service
                 List<OF> ofs = _ofService.GetAllOF();
 
@@ -77,7 +87,7 @@ namespace gererOF
             {
                 // Appelle le service pour lancer l'OF en production
                 var ofService = new OFService();
-                ofService.LancerOFEnProduction(of, quantite);
+                ofService.LancerOFEnProduction(of, quantite, opcUaClient);
 
                 MessageBox.Show($"OF {of.Numero} lancé en production avec quantité {quantite}.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
 

@@ -40,13 +40,16 @@ namespace gererOF.Repository
 
             while (reader.Read())
             {
-                var(numChargement, numDechargement) = decodeMotService.ExtraireProgrammesApiChargement(reader.GetInt32("apichargementdechargement"));
-                var (numGonflage, ctrlGonflage, numControleGonglage) = decodeMotService.ExtraireInfosControleGonflage(reader.GetInt32("apirobotgonflage"));
+                var(numChargement, numDechargement) = decodeMotService.
+                    ExtraireProgrammesApiChargement(reader.GetInt32("apichargementdechargement"));
+                var (numGonflage, ctrlGonflage, numControleGonglage) = decodeMotService.
+                    ExtraireInfosControleGonflage(reader.GetInt32("apirobotgonflage"));
                 var of = new OF(reader.GetInt32(reader.GetOrdinal("numeroof")), numChargement, numGonflage, ctrlGonflage, null, numDechargement);
 
                 if (ctrlGonflage)
                 {
-                    of.NumControleGonflage = new programmeGonflage(reader.GetInt32(reader.GetOrdinal("idgonflage")), reader.GetString(reader.GetOrdinal("labelgonflage")));
+                    of.NumControleGonflage = new programmeGonflage(reader.GetInt32(reader.GetOrdinal("idgonflage")), 
+                        reader.GetString(reader.GetOrdinal("labelgonflage")));
                 }
 
                 result.Add(of);

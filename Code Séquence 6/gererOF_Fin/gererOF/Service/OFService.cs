@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dll_OPC;
 using gererOF.Models;
 using gererOF.Repository;
 
@@ -8,10 +9,12 @@ namespace gererOF.Service
     public class OFService
     {
         private readonly OFRepository _ofRepository;
+        private readonly OPCUAService _opCUAService;
 
         public OFService()
         {
             _ofRepository = new OFRepository();
+            _opCUAService = new OPCUAService();
         }
 
         /// <summary>
@@ -32,15 +35,14 @@ namespace gererOF.Service
         /// <summary>
         /// Lance un OF en production avec vérification métier.
         /// </summary>
-        public void LancerOFEnProduction(OF of, int quantite)
+        public void LancerOFEnProduction(OF of, int quantite, OpcUaClientManager opcUaClient)
         {
             if (of == null)
                 throw new ArgumentNullException(nameof(of));
 
             if (quantite <= 0)
                 throw new ArgumentException("La quantité doit être supérieure à zéro.");
-
-            // Exemple de logique métier : vérifier si l’OF est déjà en production
+    
             var ofList = _ofRepository.getAll();
             var existe = ofList.Exists(x => x.Numero == of.Numero);
             if (!existe)
@@ -49,6 +51,19 @@ namespace gererOF.Service
             try
             {
                 _ofRepository.insertOFEnProduction(of, quantite);
+                //num chargement
+                _opCUAService.ecrire("ns=3;i=1012", opcUaClient, of.NumRobotChargement);
+                //num dechargement
+                _opCUAService.ecrire("ns=3;i=1013", opcUaClient, of.NumRobotDechargement);
+                //num gonflage
+                _opCUAService.ecrire("ns=3;i=1016", opcUaClient, of.NumRobotGonflage);
+                //ctrl gonflage
+                _opCUAService.ecrire("ns=3;i=1017", opcUaClient, of.ControleGonflage);
+                //num ctrl gonflage
+                if (of.ControleGonflage)
+                {
+                    _opCUAService.ecrire("ns=3;i=1018", opcUaClient, of.NumControleGonflage.IdGonflage);
+                }
             }
             catch (Exception ex)
             {
