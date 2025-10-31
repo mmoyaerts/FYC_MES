@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36408.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lien POO BDD", "Lien POO BDD\Lien POO BDD.csproj", "{507834BC-3927-4910-8EA0-C193839E8E7F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRONT", "FRONT\FRONT.csproj", "{902451BA-2015-4C37-8D82-B37ABADCE5ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{507834BC-3927-4910-8EA0-C193839E8E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{507834BC-3927-4910-8EA0-C193839E8E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{507834BC-3927-4910-8EA0-C193839E8E7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{902451BA-2015-4C37-8D82-B37ABADCE5ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{902451BA-2015-4C37-8D82-B37ABADCE5ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{902451BA-2015-4C37-8D82-B37ABADCE5ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{902451BA-2015-4C37-8D82-B37ABADCE5ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
