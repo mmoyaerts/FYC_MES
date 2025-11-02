@@ -31,10 +31,17 @@ partial class FormLegende
     /// </summary>
     private void InitializeComponent()
     {
-        this.components = new System.ComponentModel.Container();
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(800, 450);
-        this.Text = "FormLegende";
+        SuspendLayout();
+        // 
+        // FormLegende
+        // 
+        AutoScaleDimensions = new SizeF(7F, 15F);
+        AutoScaleMode = AutoScaleMode.Font;
+        ClientSize = new Size(800, 450);
+        Name = "FormLegende";
+        Text = "FormLegende";
+        Load += FormLegende_Load;
+        ResumeLayout(false);
     }
 
     #endregion

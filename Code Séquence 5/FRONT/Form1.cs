@@ -160,5 +160,10 @@ namespace FRONT
             chart.Titles[0].Font = new Font("Segoe UI", 10, FontStyle.Bold);
             return chart;
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

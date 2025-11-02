@@ -59,5 +59,10 @@ namespace FRONT
             btnFermer.Click += (s, e) => Close();
             Controls.Add(btnFermer);
         }
+
+        private void FormLegende_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

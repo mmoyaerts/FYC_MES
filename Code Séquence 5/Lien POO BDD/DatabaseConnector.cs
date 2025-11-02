@@ -24,7 +24,8 @@ namespace Lien_POO_BDD
 
         public NpgsqlConnection GetConnection()
         {
-            var conn = new NpgsqlConnection(_connectionString);
+
+            using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
             return conn;
         }
