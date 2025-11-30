@@ -14,6 +14,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Lien POO BDD\Lien POO BDD.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Compile Update="FormLegende.cs">
         <SubType>Form</SubType>
       </Compile>
