@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_db_Projet_seq_8
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass1234
+      POSTGRES_DB: Projet_seq_8
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Bdd:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_Projet_seq_8
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin1234
+    ports:
+      - "5051:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+  pgadmin_data:
