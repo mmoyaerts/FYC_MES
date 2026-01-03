@@ -9,6 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.378.65" />
+      <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.378.65" />
+      <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.378.65" />
+      <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Security.Certificates" Version="1.5.378.65" />
       <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
       <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
     </ItemGroup>
