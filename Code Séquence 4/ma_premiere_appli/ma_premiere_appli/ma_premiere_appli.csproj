@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Dll_OPC\Dll_OPC\Dll_OPC.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Dll_OPC">
       <HintPath>..\..\..\..\..\..\..\Downloads\projet\projet\Dll_OPC\Dll_OPC\bin\Release\netstandard2.0\Dll_OPC.dll</HintPath>
     </Reference>

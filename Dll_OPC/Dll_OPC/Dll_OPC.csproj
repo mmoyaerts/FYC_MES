@@ -5,15 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.376.235" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.376.235" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.376.235" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Security.Certificates" Version="1.5.376.235" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Code Séquence 5\FRONT\FRONT.csproj" />
-    <ProjectReference Include="..\..\Code Séquence 5\Lien POO BDD\Lien POO BDD.csproj" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.376.244" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.376.244" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.376.244" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Security.Certificates" Version="1.5.376.244" />
   </ItemGroup>
 
 </Project>

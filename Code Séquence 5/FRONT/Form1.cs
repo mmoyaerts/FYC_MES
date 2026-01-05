@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Lien_POO_BDD.Models;
+using Dll_OPC;
 
 namespace FRONT
 {
@@ -11,14 +12,52 @@ namespace FRONT
     {
         private Dictionary<string, Color> etatsPostes;
         private Dictionary<string, Panel> cerclesPostes;
-        private Dictionary<string, int[]> donneesProduction;
+        private Dictionary<string, List<int>> donneesProduction;
+        private Dictionary<string, Chart> graphiquesPostes;
         private Panel panelLigne;
+        private System.Windows.Forms.Timer timerOPC;
         private FlowLayoutPanel panelGraph;
         private int xPositionProchainPoste = 100;
         private PosteRepository Posterepo;
+        private OpcUaClientManager opcUaClient;
+        private const string OPC_ENDPOINT =
+            "opc.tcp://PC_DE_MAT:53530/OPCUA/SimulationServer";
+        private Dictionary<string, string> nodeIdsPostes;
+        private Dictionary<string, string> nodeIdsProduction;
 
         public Form1()
         {
+
+            nodeIdsPostes = new Dictionary<string, string>
+            {
+                   { "Découpe", "ns=3;i=1003" },
+                   { "Assemblage", "ns=3;i=1006" },
+                   { "Peinture", "ns=3;i=1013" }
+            };
+
+            opcUaClient = new OpcUaClientManager(OPC_ENDPOINT);
+
+            // Connexion OPC UA au démarrage (non bloquante)
+            Task.Run(async () => await ConnecterOpcUaAsync()).Wait();
+
+            // Initialisation du timer
+            timerOPC = new System.Windows.Forms.Timer();
+            timerOPC.Interval = 2000; // 1 seconde
+            timerOPC.Tick += TimerOPC_Tick;
+            timerOPC.Start();
+
+            Button btnTestOpc = new Button
+            {
+                Text = "Test OPC UA",
+                Width = 200,
+                Height = 40,
+                Left = 700,
+                Top = 70,
+                BackColor = Color.LightGreen
+            };
+
+
+
             Text = "Vue simplifiée de la ligne de production";
             Width = 1200;
             Height = 700;
@@ -33,12 +72,21 @@ namespace FRONT
                 { "Peinture", Color.Red }
             };
             cerclesPostes = new Dictionary<string, Panel>();
-            donneesProduction = new Dictionary<string, int[]>
+            donneesProduction = new Dictionary<string, List<int>>();
+            graphiquesPostes = new Dictionary<string, Chart>();
+
+            nodeIdsProduction = new Dictionary<string, string>
             {
-                { "Découpe", new int[] { 0, 20, 40, 60, 80 } },
-                { "Assemblage", new int[] { 0, 25, 50, 70, 100 } },
-                { "Peinture", new int[] { 0, 15, 35, 55, 75 } }
+                { "Découpe", "ns=3;i=1002" },
+                { "Assemblage", "ns=3;i=1005" },
+                { "Peinture", "ns=3;i=1012" }
             };
+
+            foreach (var poste in nodeIdsPostes.Keys)
+            {
+                donneesProduction[poste] = new List<int>();
+            }
+
 
             // Panneau de ligne
             panelLigne = new Panel
@@ -66,12 +114,13 @@ namespace FRONT
             };
             Controls.Add(panelGraph);
 
-            // Création des graphiques pour les postes existants
-            foreach (var poste in donneesProduction)
+            foreach (var poste in donneesProduction.Keys)
             {
-                Chart chart = CreerGraphique(poste.Key, poste.Value);
+                Chart chart = CreerGraphique(poste);
+                graphiquesPostes[poste] = chart;
                 panelGraph.Controls.Add(chart);
             }
+
 
             // Bouton pour ajouter un nouveau poste
             Button btnAjouterPoste = new Button
@@ -83,89 +132,189 @@ namespace FRONT
                 Top = 20,
                 BackColor = Color.LightBlue
             };
-            btnAjouterPoste.Click += BtnAjouterPoste_Click;
-            Controls.Add(btnAjouterPoste);
-            btnAjouterPoste.BringToFront();
+            //btnAjouterPoste.Click += BtnAjouterPoste_Click;
+            //Controls.Add(btnAjouterPoste);
+            //btnAjouterPoste.BringToFront();
         }
 
-        private void BtnAjouterPoste_Click(object sender, EventArgs e)
+        private void TimerOPC_Tick(object sender, EventArgs e)
         {
-            // Nouvelle fenêtre pour saisir le poste
-            Form fenetreAjouter = new Form
+            foreach (var poste in nodeIdsPostes)
             {
-                Text = "Ajouter un poste",
-                Width = 350,
-                Height = 250,
-                StartPosition = FormStartPosition.CenterParent
-            };
-
-            Label lblNom = new Label { Text = "Nom du poste :", Left = 20, Top = 20, Width = 100 };
-            TextBox txtNom = new TextBox { Left = 130, Top = 20, Width = 150 };
-
-            Label lblCouleur = new Label { Text = "Couleur initiale :", Left = 20, Top = 60, Width = 100 };
-            ComboBox cbCouleur = new ComboBox { Left = 130, Top = 60, Width = 150 };
-            cbCouleur.Items.AddRange(new string[] { "Vert", "Jaune", "Rouge", "Bleu", "Violet" });
-            cbCouleur.SelectedIndex = 0;
-
-            Label lblData = new Label { Text = "Production (ex: 0,10,20) :", Left = 20, Top = 100, Width = 150 };
-            TextBox txtData = new TextBox { Left = 170, Top = 100, Width = 110 };
-
-            Button btnValider = new Button { Text = "Ajouter", Left = 100, Top = 150, Width = 120 };
-            btnValider.Click += (s, ev) =>
+                MettreAJourEtatDepuisOPC(poste.Key, poste.Value);
+            }
+            foreach (var poste in nodeIdsProduction)
             {
-                string nom = txtNom.Text.Trim();
-                if (string.IsNullOrEmpty(nom))
-                {
-                    MessageBox.Show("Nom obligatoire !");
-                    return;
-                }
+                MettreAJourGraphiqueDepuisOPC(poste.Key, poste.Value);
+            }
 
-                // Conversion couleur sélectionnée
-                Color couleur = cbCouleur.SelectedItem.ToString() switch
-                {
-                    "Vert" => Color.Green,
-                    "Jaune" => Color.Yellow,
-                    "Rouge" => Color.Red,
-                    "Bleu" => Color.Blue,
-                    "Violet" => Color.Purple,
-                    _ => Color.Gray
-                };
-
-                // Conversion des données de production
-                string[] parts = txtData.Text.Split(',');
-                int[] valeurs = Array.ConvertAll(parts, p => int.TryParse(p, out int val) ? val : 0);
-
-                // Ajout dans le back-end (UI)
-                etatsPostes[nom] = couleur;
-                donneesProduction[nom] = valeurs;
-
-                // Création de l'objet Poste pour le repository
-                Poste nouveauPoste = new Poste(nom, "192.168.0.1", 1);
-
-
-                // Ajout via le repository (en base)
-                Posterepo.InsertPoste(nouveauPoste);
-
-                // Mise à jour du front-end
-                CreerPoste(panelLigne, nom, couleur, xPositionProchainPoste, 80);
-                xPositionProchainPoste += 300;
-
-                Chart chart = CreerGraphique(nom, valeurs);
-                panelGraph.Controls.Add(chart);
-
-                fenetreAjouter.Close();
-            };
-
-            fenetreAjouter.Controls.Add(lblNom);
-            fenetreAjouter.Controls.Add(txtNom);
-            fenetreAjouter.Controls.Add(lblCouleur);
-            fenetreAjouter.Controls.Add(cbCouleur);
-            fenetreAjouter.Controls.Add(lblData);
-            fenetreAjouter.Controls.Add(txtData);
-            fenetreAjouter.Controls.Add(btnValider);
-
-            fenetreAjouter.ShowDialog();
         }
+        private void MettreAJourGraphiqueDepuisOPC(string nomPoste, string nodeId)
+        {
+            try
+            {
+                int valeur = Convert.ToInt32(opcUaClient.ReadValue(nodeId));
+
+                // Limite l’historique
+                if (donneesProduction[nomPoste].Count > 20)
+                    donneesProduction[nomPoste].RemoveAt(0);
+
+                donneesProduction[nomPoste].Add(valeur);
+
+                // Mise à jour graphique
+                Series serie = graphiquesPostes[nomPoste].Series[0];
+                serie.Points.Clear();
+
+                for (int i = 0; i < donneesProduction[nomPoste].Count; i++)
+                {
+                    serie.Points.AddXY(i + 1, donneesProduction[nomPoste][i]);
+                }
+            }
+            catch
+            {
+                // En cas de problème OPC → on ignore le tick
+            }
+        }
+
+        private Chart CreerGraphique(string poste)
+        {
+            Chart chart = new Chart
+            {
+                Width = 300,
+                Height = 200,
+                BackColor = Color.White
+            };
+
+            ChartArea area = new ChartArea();
+            area.AxisX.Title = "Temps";
+            area.AxisY.Title = "Production";
+            area.AxisX.MajorGrid.Enabled = false;
+            area.AxisY.MajorGrid.LineColor = Color.LightGray;
+            chart.ChartAreas.Add(area);
+
+            Series serie = new Series
+            {
+                Name = poste,
+                ChartType = SeriesChartType.Line,
+                BorderWidth = 3
+            };
+
+            chart.Series.Add(serie);
+            chart.Titles.Add(poste);
+
+            return chart;
+        }
+
+
+        private void MettreAJourEtatDepuisOPC(string nomPoste, string nodeId)
+        {
+            int etat = Convert.ToInt32(opcUaClient.ReadValue(nodeId));
+            if (etat == 0)
+                etatsPostes[nomPoste] = Color.Green;
+            else if (etat == 1)
+                etatsPostes[nomPoste] = Color.Yellow;
+            else if (etat == 2)
+                etatsPostes[nomPoste] = Color.Red;
+            else if (etat == 3)
+                etatsPostes[nomPoste] = Color.Purple;
+            else if (etat == 4)
+                etatsPostes[nomPoste] = Color.Gray;
+
+            cerclesPostes[nomPoste].Invalidate();
+        }
+
+
+        private async Task ConnecterOpcUaAsync()
+        {
+            try
+            {
+                await opcUaClient.ConnectAsync();
+                MessageBox.Show("Connexion OPC UA OK");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        //private void BtnAjouterPoste_Click(object sender, EventArgs e)
+        //{
+        //    // Nouvelle fenêtre pour saisir le poste
+        //    Form fenetreAjouter = new Form
+        //    {
+        //        Text = "Ajouter un poste",
+        //        Width = 350,
+        //        Height = 250,
+        //        StartPosition = FormStartPosition.CenterParent
+        //    };
+
+        //    Label lblNom = new Label { Text = "Nom du poste :", Left = 20, Top = 20, Width = 100 };
+        //    TextBox txtNom = new TextBox { Left = 130, Top = 20, Width = 150 };
+
+        //    Label lblCouleur = new Label { Text = "Couleur initiale :", Left = 20, Top = 60, Width = 100 };
+        //    ComboBox cbCouleur = new ComboBox { Left = 130, Top = 60, Width = 150 };
+        //    cbCouleur.Items.AddRange(new string[] { "Vert", "Jaune", "Rouge", "Bleu", "Violet" });
+        //    cbCouleur.SelectedIndex = 0;
+
+        //    Label lblData = new Label { Text = "Production (ex: 0,10,20) :", Left = 20, Top = 100, Width = 150 };
+        //    TextBox txtData = new TextBox { Left = 170, Top = 100, Width = 110 };
+
+        //    Button btnValider = new Button { Text = "Ajouter", Left = 100, Top = 150, Width = 120 };
+        //    btnValider.Click += (s, ev) =>
+        //    {
+        //        string nom = txtNom.Text.Trim();
+        //        if (string.IsNullOrEmpty(nom))
+        //        {
+        //            MessageBox.Show("Nom obligatoire !");
+        //            return;
+        //        }
+
+        //        // Conversion couleur sélectionnée
+        //        Color couleur = cbCouleur.SelectedItem.ToString() switch
+        //        {
+        //            "Vert" => Color.Green,
+        //            "Jaune" => Color.Yellow,
+        //            "Rouge" => Color.Red,
+        //            "Bleu" => Color.Blue,
+        //            "Violet" => Color.Purple,
+        //            _ => Color.Gray
+        //        };
+
+        //        // Conversion des données de production
+        //        string[] parts = txtData.Text.Split(',');
+        //        int[] valeurs = Array.ConvertAll(parts, p => int.TryParse(p, out int val) ? val : 0);
+
+        //        // Ajout dans le back-end (UI)
+        //        etatsPostes[nom] = couleur;
+        //        donneesProduction[nom] = valeurs;
+
+        //        // Création de l'objet Poste pour le repository
+        //        Poste nouveauPoste = new Poste(nom, "192.168.0.1", 1);
+
+
+        //        // Ajout via le repository (en base)
+        //        Posterepo.InsertPoste(nouveauPoste);
+
+        //        // Mise à jour du front-end
+        //        CreerPoste(panelLigne, nom, couleur, xPositionProchainPoste, 80);
+        //        xPositionProchainPoste += 300;
+
+        //        Chart chart = CreerGraphique(nom, valeurs);
+        //        panelGraph.Controls.Add(chart);
+
+        //        fenetreAjouter.Close();
+        //    };
+
+        //    fenetreAjouter.Controls.Add(lblNom);
+        //    fenetreAjouter.Controls.Add(txtNom);
+        //    fenetreAjouter.Controls.Add(lblCouleur);
+        //    fenetreAjouter.Controls.Add(cbCouleur);
+        //    fenetreAjouter.Controls.Add(lblData);
+        //    fenetreAjouter.Controls.Add(txtData);
+        //    fenetreAjouter.Controls.Add(btnValider);
+
+        //    fenetreAjouter.ShowDialog();
+        //}
 
         private void CreerPoste(Panel panel, string nom, Color couleur, int x, int y)
         {

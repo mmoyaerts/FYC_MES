@@ -4,7 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        string endpointUrl = "opc.tcp://ADMINIS-AIHP154.mshome.net:53530/OPCUA/SimulationServer";
+        string endpointUrl = "opc.tcp://PC_DE_MAT:53530/OPCUA/SimulationServer";
         OpcUaClientManager opcUaClient = new OpcUaClientManager(endpointUrl);
         // Utilise Task.Run pour exécuter du code asynchrone
         Task.Run(async () => await RunApplication(endpointUrl, opcUaClient)).Wait();
