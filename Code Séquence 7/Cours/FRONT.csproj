@@ -19,7 +19,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Dll_OPC\Dll_OPC\Dll_OPC.csproj" />
-      <ProjectReference Include="..\Lien POO BDD\Lien POO BDD.csproj" />
     </ItemGroup>
 
     <ItemGroup>

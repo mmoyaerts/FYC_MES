@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRONT", "correction_td7\FRONT.csproj", "{8C98F227-F42A-449B-B949-2891B8EDC4B1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BACK", "BACK\BACK.csproj", "{98CB9381-B5C1-4073-999D-9A346C7C80CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRONT", "FRONT.csproj", "{6947674C-6F2E-7DD5-0612-85891EE54B50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dll_OPC", "..\..\Dll_OPC\Dll_OPC\Dll_OPC.csproj", "{AB01583C-5F6A-0BC9-09AC-BDA85CCAECFE}"
 EndProject
@@ -15,14 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C98F227-F42A-449B-B949-2891B8EDC4B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C98F227-F42A-449B-B949-2891B8EDC4B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C98F227-F42A-449B-B949-2891B8EDC4B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C98F227-F42A-449B-B949-2891B8EDC4B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{98CB9381-B5C1-4073-999D-9A346C7C80CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98CB9381-B5C1-4073-999D-9A346C7C80CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98CB9381-B5C1-4073-999D-9A346C7C80CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98CB9381-B5C1-4073-999D-9A346C7C80CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6947674C-6F2E-7DD5-0612-85891EE54B50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6947674C-6F2E-7DD5-0612-85891EE54B50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6947674C-6F2E-7DD5-0612-85891EE54B50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6947674C-6F2E-7DD5-0612-85891EE54B50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB01583C-5F6A-0BC9-09AC-BDA85CCAECFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB01583C-5F6A-0BC9-09AC-BDA85CCAECFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB01583C-5F6A-0BC9-09AC-BDA85CCAECFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,6 +26,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1270CA01-6B42-484A-A4A4-5D25424BFA02}
+		SolutionGuid = {CC6CC4D7-DAC8-416E-9052-82E49EA1061E}
 	EndGlobalSection
 EndGlobal

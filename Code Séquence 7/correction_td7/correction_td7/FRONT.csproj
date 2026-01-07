@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\FYC_MES\Dll_OPC\Dll_OPC\Dll_OPC.csproj" />
+    <ProjectReference Include="..\..\..\Dll_OPC\Dll_OPC\Dll_OPC.csproj" />
     <ProjectReference Include="..\BACK\BACK.csproj" />
   </ItemGroup>
 

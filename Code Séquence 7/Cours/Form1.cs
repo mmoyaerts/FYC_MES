@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using Lien_POO_BDD.Models;
 using Dll_OPC;
 
 namespace FRONT
@@ -18,7 +17,6 @@ namespace FRONT
         private System.Windows.Forms.Timer timerOPC;
         private FlowLayoutPanel panelGraph;
         private int xPositionProchainPoste = 100;
-        private PosteRepository Posterepo;
         private OpcUaClientManager opcUaClient;
         private const string OPC_ENDPOINT =
             "opc.tcp://PC_DE_MAT:53530/OPCUA/SimulationServer";
